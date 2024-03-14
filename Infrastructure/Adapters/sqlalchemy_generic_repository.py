@@ -17,7 +17,7 @@ class SqlAlchemyGenericRepository(AbcGenericRepository):
         self.model = model
 
 
-    def read_by_options(self, schema, eager_loading=False):
+    def read_by_options(self, schema, include_propiertys: str = str()):
         with self.session_factory() as session:
             schema_as_dict = schema.dict(exclude_none=True)
             ordering = schema_as_dict.get("ordering", project_configuration.ORDERING)
@@ -26,37 +26,23 @@ class SqlAlchemyGenericRepository(AbcGenericRepository):
                 if ordering.startswith("-")
                 else getattr(self.model, ordering).asc()
             )
-            page = schema_as_dict.get("page", project_configuration.PAGE)
-            page_size = schema_as_dict.get("page_size", project_configuration.PAGE_SIZE)
             filter_options = dict_to_sqlalchemy_filter_options(self.model, schema.dict(exclude_none=True))
             query = session.query(self.model)
-            if eager_loading:
-                for eager_loading in getattr(self.model, "eagers", []):
-                    query = query.options(joinedload(getattr(self.model, eager_loading)))
+            if not include_propiertys:
+                for propierty in include_propiertys.split(","):
+                    query = query.options(joinedload(getattr(self.model, propierty)))
             filtered_query = query.filter(filter_options)
             query = filtered_query.order_by(order_query)
-            if page_size == "all":
-                query = query.all()
-            else:
-                query = query.limit(page_size).offset((page - 1) * page_size).all()
-            total_count = filtered_query.count()
-            return {
-                "founds": query,
-                "search_options": {
-                    "page": page,
-                    "page_size": page_size,
-                    "ordering": ordering,
-                    "total_count": total_count,
-                },
-            }
+            query = query.all()
+            return query
 
 
-    def read_by_id(self, id: int, eager_loading=False):
+    def read_by_id(self, id: int,  include_propiertys: str = str()):
         with self.session_factory() as session:
             query = session.query(self.model)
-            if eager_loading:
-                for eager_loading in getattr(self.model, "eagers", []):
-                    query = query.options(joinedload(getattr(self.model, eager_loading)))
+            if not include_propiertys:
+                for propierty in include_propiertys.split(","):
+                    query = query.options(joinedload(getattr(self.model, propierty)))
             query = query.filter(self.model.id == id).first()
             if not query:
                 raise NotFoundErrorException(detail=f"not found id : {id}")
