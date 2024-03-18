@@ -1,19 +1,22 @@
 from contextlib import AbstractContextManager
+import uuid
 
 from sqlalchemy import ColumnExpressionArgument
+from Domain.Entities.Base.base_entity import BaseEntity
 from Domain.Exceptions.duplicated_error_exception import DuplicatedErrorException
 from Domain.Exceptions.not_found_error_exception import NotFoundErrorException
 from Domain.Ports.abc_generic_repository import AbcGenericRepository
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
-from typing import Callable
+from typing import Callable, TypeVar, Generic
 
+Entity = TypeVar("Entity", bound=BaseEntity)
 
-class SqlAlchemyGenericRepository(AbcGenericRepository):
+class SqlAlchemyGenericRepository(AbcGenericRepository, Generic[Entity]):
     
-    def __init__(self, session_factory: Callable[..., AbstractContextManager[Session]], model) -> None:
+    def __init__(self, session_factory: Callable[..., AbstractContextManager[Session]], entity: type[Entity]) -> None:
         self.session_factory = session_factory
-        self.model = model
+        self.model = entity
 
 
     def read_by_options(self, 
@@ -31,7 +34,7 @@ class SqlAlchemyGenericRepository(AbcGenericRepository):
             return query
 
 
-    def read_by_id(self, id: int,  include_propiertys: str = str()):
+    def read_by_id(self, id: uuid.UUID,  include_propiertys: str = str()):
         with self.session_factory() as session:
             query = session.query(self.model)
             if not include_propiertys:
@@ -43,9 +46,9 @@ class SqlAlchemyGenericRepository(AbcGenericRepository):
             return query
 
 
-    def create(self, schema):
+    def create(self, entity: type[Entity]):
         with self.session_factory() as session:
-            query = self.model(**schema.dict())
+            query = self.model(entity)
             try:
                 session.add(query)
                 session.commit()
@@ -55,9 +58,9 @@ class SqlAlchemyGenericRepository(AbcGenericRepository):
             return query
 
 
-    def update(self, id: int, schema):
+    def update(self, id: uuid.UUID, entity: type[Entity]):
         with self.session_factory() as session:
-            session.query(self.model).filter(self.model.id == id).update(schema.dict(exclude_none=True))
+            session.query(self.model).filter(self.model.id == id).update(entity)
             session.commit()
             return self.read_by_id(id)
 

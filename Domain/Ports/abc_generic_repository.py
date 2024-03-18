@@ -1,10 +1,14 @@
 from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
 
+from Domain.Entities.Base.base_entity import BaseEntity
 
-class AbcGenericRepository(ABC):
+Entity = TypeVar("Entity", bound=BaseEntity)
+
+class AbcGenericRepository(ABC, Generic[Entity]):
 
     @abstractmethod
-    def read_by_options(self, schema, eager=False):
+    def read_by_options(self, entity: type[Entity], eager=False):
         pass
 
 
@@ -14,12 +18,12 @@ class AbcGenericRepository(ABC):
 
 
     @abstractmethod
-    def add(self, schema):
+    def add(self, entity: type[Entity]):
         pass
 
 
     @abstractmethod
-    def update(self, id: int, schema):
+    def update(self, id: int, entity: type[Entity]):
         pass
 
 
