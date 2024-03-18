@@ -1,4 +1,5 @@
 import os
+from typing import List
 from dotenv import load_dotenv
 from pydantic import BaseSettings
 
@@ -19,6 +20,10 @@ class ProjectConfiguration(BaseSettings):
     DB_ENGINE: str = os.getenv("DB_ENGINE")
     DB_NAME: str = os.getenv("DB_NAME")
 
+    # CORS
+    BACKEND_CORS_ORIGINS: List[str] = ["*"]
+
+    # database
     DATABASE_URI_FORMAT: str = "{db_engine}://{user}:{password}@{host}:{port}/{database}"
 
     DATABASE_URI = DATABASE_URI_FORMAT.format(

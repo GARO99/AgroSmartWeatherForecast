@@ -1,5 +1,4 @@
 from dependency_injector import containers, providers
-
 from Domain.Ports.abc_generic_repository import AbcGenericRepository
 from Infrastructure.Adapters.sqlalchemy_generic_repository import SqlAlchemyGenericRepository
 from Infrastructure.Configuration.project_configuration import ProjectConfiguration

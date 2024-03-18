@@ -1,5 +1,6 @@
 from Endpoints.routes import routers
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 from Infrastructure.Container.container import Container
 from Infrastructure.Utils.singleton import singleton
 from Infrastructure.Configuration.project_configuration import ProjectConfiguration
@@ -18,6 +19,16 @@ class AppCreator:
         self.container = Container()
         self.db = self.container.db()
 
+        # set cors
+        if ProjectConfiguration.BACKEND_CORS_ORIGINS:
+            self.app.add_middleware(
+                CORSMiddleware,
+                allow_origins=[str(origin) for origin in ProjectConfiguration.BACKEND_CORS_ORIGINS],
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
+            )
+
         # set routes
         @self.app.get("/")
         def root():
@@ -29,3 +40,5 @@ class AppCreator:
 
 app_creator = AppCreator()
 app = app_creator.app
+db = app_creator.db
+container = app_creator.container
