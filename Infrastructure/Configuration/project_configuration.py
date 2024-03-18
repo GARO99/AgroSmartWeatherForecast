@@ -35,6 +35,7 @@ class ProjectConfiguration(BaseSettings):
 
     @property
     def DATABASE_URI(self) -> str:
+        print(self.__DB_USER)
         return self.__DATABASE_URI_FORMAT.format(
             db_engine=self.__DB_ENGINE,
             user=self.__DB_USER,

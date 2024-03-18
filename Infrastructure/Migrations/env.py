@@ -6,6 +6,8 @@ from sqlalchemy import pool
 from alembic import context
 from sqlmodel import SQLModel
 
+from Domain.Entities.FamerLands.farmer_land import FarmerLand
+
 from Infrastructure.Configuration.project_configuration import ProjectConfiguration
 
 # this is the Alembic Config object, which provides
