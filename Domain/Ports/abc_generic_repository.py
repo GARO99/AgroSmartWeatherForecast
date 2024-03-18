@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from typing import Any, Callable, Generic, TypeVar
+import uuid
 
 from Domain.Entities.Base.base_entity import BaseEntity
 
@@ -8,12 +9,18 @@ Entity = TypeVar("Entity", bound=BaseEntity)
 class AbcGenericRepository(ABC, Generic[Entity]):
 
     @abstractmethod
-    def read_by_options(self, entity: type[Entity], eager=False):
+    def read_by_options(self, 
+        *criterion: Callable[[Any], bool],
+        include_propiertys: str = str()
+    ):
         pass
 
 
     @abstractmethod
-    def read_by_id(self, id: int, eager=False):
+    def read_by_id(self,
+        id: uuid.UUID,
+        include_propiertys: str = str()
+    ):
         pass
 
 
