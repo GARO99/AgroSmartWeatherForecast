@@ -6,7 +6,7 @@ env_path = '../../.env'
 
 load_dotenv(dotenv_path=env_path)
 
-class project_configuration(BaseSettings):
+class ProjectConfiguration(BaseSettings):
     # base
     PROJECT_NAME: str = "Agro Smart Weather Forecast Api"
     API_PREFIX: str = "/api"
@@ -29,5 +29,3 @@ class project_configuration(BaseSettings):
         port=DB_PORT,
         database=DB_NAME,
     )
-    
-    ORDERING = "-id"
