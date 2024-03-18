@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-routers = APIRouter()
+from API.Endpoints.FarmerLands.FarmerLand import farmer_land_router
 
-router_list = []
+routers = APIRouter()
+router_list = [farmer_land_router]
 
 for router in router_list:
     routers.include_router(router)
