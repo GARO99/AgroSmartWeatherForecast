@@ -8,11 +8,14 @@ from Infrastructure.Context.persistence_context import PersistenceContext
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "Domain.Sevices"
+            "Domain"
         ]
     )
     
-    db = providers.Singleton(PersistenceContext, db_url=ProjectConfiguration.DATABASE_URI)
+    db = providers.Singleton(
+        PersistenceContext, 
+        db_url=ProjectConfiguration().DATABASE_URI
+    )
     
     generic_repository = providers.Factory(
         SqlAlchemyGenericRepository,

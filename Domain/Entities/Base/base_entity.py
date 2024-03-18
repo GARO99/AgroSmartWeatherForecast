@@ -1,9 +1,8 @@
 from datetime import datetime
 from typing import Optional
 import uuid
-
+from sqlalchemy.ext.declarative import declarative_base
 from sqlmodel import Column, DateTime, Field, SQLModel, func
-
 
 class BaseEntity(SQLModel):
     id: Optional[uuid.UUID] = Field(primary_key=True)
